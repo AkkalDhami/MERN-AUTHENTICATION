@@ -1,0 +1,82 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-all
+        font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji'" />
+      <mj-text font-size="16px" color="#000000" />
+      <mj-section padding="0px" />
+      <mj-column padding="0px" />
+    </mj-attributes>
+  </mj-head>
+
+  <mj-body background-color="#ffffff">
+    <mj-section padding="3px 1px">
+      <mj-column>
+        <mj-wrapper
+          background-color="#ffffff"
+          border-radius="0"
+          css-class="card">
+          <mj-section background-color="#000000ff" padding="1px 5px">
+            <mj-column>
+              <mj-text
+                align="center"
+                color="#ffffff"
+                font-size="18px"
+                font-weight="bold"
+                >New  OTP Request</mj-text
+              >
+            </mj-column>
+          </mj-section>
+
+          <!-- OTP Code -->
+          <mj-section padding="12px 0">
+            <mj-column>
+              <mj-text align="left" color="#333333" padding-bottom="12px">
+                Here is your OTP. This OTP expires in 5 minutes.
+              </mj-text>
+              <mj-text
+                align="left"
+                font-size="24px"
+                font-weight="700"
+                letter-spacing="6px"
+                padding-bottom="12px"
+                background-color="#000"
+                color="#111111"
+                border="1px solid #000"
+                border-radius="4px">
+                {{CODE}}
+              </mj-text>
+            </mj-column>
+          </mj-section>
+
+          <!-- Footer -->
+          <mj-section padding="0 4px 4px 4px">
+            <mj-column>
+              <mj-text
+                align="left"
+                color="#666666"
+                font-size="13px"
+                padding-top="16px">
+                If you didn't request this, you can safely ignore this email.
+              </mj-text>
+              <mj-text
+                align="left"
+                color="#3b3b3b"
+                font-size="12px"
+                padding-top="8px">
+                Sent by {{APP_NAME}}
+              </mj-text>
+              <mj-text
+                align="left"
+                color="#3b3b3b"
+                font-size="12px"
+                padding-top="8px">
+                © {{CURRENT_DATE}} | {{APP_NAME}} | All rights reserved.
+              </mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-wrapper>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
