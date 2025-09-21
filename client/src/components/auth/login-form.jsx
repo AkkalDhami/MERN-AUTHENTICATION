@@ -10,9 +10,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
-import { useGoogleLogin } from "@react-oauth/google";
 import { LoginSchema } from "../../schemas/auth";
-import { useGoogleLoginMutation } from "../../features/auth/authApi";
+import { useGoogleLoginQuery } from "../../features/auth/authApi";
 
 export function LoginForm({ className, onsubmit, ...props }) {
   const {
@@ -24,27 +23,8 @@ export function LoginForm({ className, onsubmit, ...props }) {
     mode: "onTouched",
   });
 
-  const [googleLogin, { isError, error }] = useGoogleLoginMutation();
-
-  const responseGoogle = async (authResult) => {
-    try {
-      if (authResult.code) {
-        console.log(authResult);
-        const result = await googleLogin(authResult.code).unwrap();
-        console.log("Login success:", result);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const googleLoginHandler = useGoogleLogin({
-    onSuccess: responseGoogle,
-    onError: responseGoogle,
-    redirect_uri: "http://localhost:5173/auth/callback",
-    flow: "auth-code",
-  });
-
+  const { data, obj } = useGoogleLoginQuery();
+  console.log(data, obj);
   const [apiError, setApiError] = useState(null);
 
   const handleLoginSubmit = async (data) => {
@@ -56,7 +36,6 @@ export function LoginForm({ className, onsubmit, ...props }) {
     }
   };
 
-  if (isError) toast.error(error?.data?.message);
 
   return (
     <Card className={cn("gap-4", className)}>
@@ -132,7 +111,7 @@ export function LoginForm({ className, onsubmit, ...props }) {
             </div>
 
             <Button
-              onClick={googleLoginHandler}
+              onClick={() => window.open("http://localhost:3000/api/auth/google", "_self")}
               variant="outline"
               type="button"
               className="w-full"

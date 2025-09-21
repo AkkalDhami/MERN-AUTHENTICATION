@@ -1,13 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import { ChevronsLeft, Loader } from "lucide-react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function OtpInput({ length = 6, onsubmit, isLoading }) {
   const [otp, setOtp] = useState(Array(length).fill(""));
   const inputRefs = useRef([]);
-
+  const navigate = useNavigate();
   // Focus first input on mount
   useEffect(() => {
     if (inputRefs.current[0]) {
@@ -53,7 +61,8 @@ export default function OtpInput({ length = 6, onsubmit, isLoading }) {
     e.preventDefault();
     const otpValue = otp.join("");
     if (otpValue.length !== length) {
-      alert("Please enter complete OTP");
+      toast.error("Please enter complete OTP");
+      navigate("/auth/otp-verify");
       return;
     }
     onsubmit(otpValue);
@@ -91,7 +100,8 @@ export default function OtpInput({ length = 6, onsubmit, isLoading }) {
             size="lg"
             type="submit"
             disabled={otp.join("").length !== length}
-            className="w-full mt-3 disabled:bg-gray-400">
+            className="w-full mt-3 disabled:bg-gray-400"
+          >
             {isLoading ? (
               <>
                 <Loader className="animate-spin" /> Verifying OTP....
@@ -102,6 +112,12 @@ export default function OtpInput({ length = 6, onsubmit, isLoading }) {
           </Button>
         </form>
       </CardContent>
+
+      <CardFooter>
+        <Button variant="outline" onClick={() => navigate(-1)}>
+         <ChevronsLeft /> Back
+        </Button>
+      </CardFooter>
     </Card>
   );
 }

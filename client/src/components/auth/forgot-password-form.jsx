@@ -21,6 +21,7 @@ export function ForgotPasswordForm({
   className,
   onsubmit,
   emailVerify = false,
+  changePassword = false,
   ...props
 }) {
   const {
@@ -51,6 +52,7 @@ export function ForgotPasswordForm({
       setApiError("Something went wrong. Please try again.");
     }
   };
+
   return (
     <>
       <Card className="gap-0">
@@ -72,8 +74,7 @@ export function ForgotPasswordForm({
               emailVerify ? handleEmailVerify : handleForgotFormSubmit
             )}
             className={cn("flex flex-col gap-6", className)}
-            {...props}
-          >
+            {...props}>
             <div className="grid mt-2.5 gap-4">
               <div className="grid gap-3">
                 <Label htmlFor="email">Email *</Label>
@@ -95,8 +96,7 @@ export function ForgotPasswordForm({
                 size="lg"
                 type="submit"
                 className="w-full"
-                disabled={isSubmitting}
-              >
+                disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader className="mr-2 h-6 w-6 animate-spin" />
@@ -115,8 +115,7 @@ export function ForgotPasswordForm({
                   Back to Profile ?{" "}
                   <Link
                     to={"/profile"}
-                    className="underline underline-offset-4"
-                  >
+                    className="underline underline-offset-4">
                     Profile
                   </Link>
                 </>
