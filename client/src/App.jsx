@@ -1,5 +1,9 @@
 import React from "react";
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -9,14 +13,13 @@ import Profile from "./pages/auth/ProfilePage";
 import PublicRoute from "./routes/PublicRoutes";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
 import EmailVerify from "./pages/auth/EmailVerify";
+import AuthSuccess from "./pages/auth/AuthSuccess";
 
 const App = () => {
-
-
   const router = createBrowserRouter([
     {
       path: "/",
-      element:  <Navigate to="/login" replace />,
+      element: <Navigate to="/login" replace />,
       errorElement: <div>Page Not Found</div>,
     },
     {
@@ -74,6 +77,10 @@ const App = () => {
           <ResetPassword />
         </PublicRoute>
       ),
+    },
+    {
+      path: "/auth-success",
+      element: <AuthSuccess />,
     },
   ]);
 

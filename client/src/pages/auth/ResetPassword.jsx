@@ -9,17 +9,14 @@ const ResetPassword = () => {
   const navigate = useNavigate();
   
   const [resetPassword] = useResetPasswordMutation();
-  console.log(params);
 
   const token = params.token;
-  console.log(token);
 
   const handleResetPasswordForm = async (data) => {
     console.log(data);
     try {
       const res = await resetPassword({ data, token }).unwrap();
       console.log(res);
-      if (!res?.success) return toast.error(res?.message);
       toast.success(res?.message);
       navigate("/login");
     } catch (err) {

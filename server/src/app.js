@@ -7,7 +7,7 @@ dotenv.config();
 
 import { connectToDatabase } from './configs/db.js';
 import { errorHandler } from './middlewares/errorHandler.js';
-import "./configs/google.js"
+import "./configs/passport.js"
 
 import authRouter from './routes/authRoutes.js';
 

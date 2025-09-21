@@ -58,10 +58,10 @@ const authApi = createApi({
         }),
 
         verifyOtp: builder.mutation({
-            query: ({ code, purpose = "" , email}) => ({
+            query: ({ code, purpose = "", email }) => ({
                 url: '/otp-verify',
                 method: 'POST',
-                body: { code, purpose , email}
+                body: { code, purpose, email }
             }),
             providesTags: ['Auth'],
         }),
@@ -91,12 +91,8 @@ const authApi = createApi({
             invalidatesTags: ['Auth'],
         }),
 
-        googleLogin: builder.mutation({
-            query: (code) => ({
-                url: `/google-login`,
-                method: 'POST',
-                body: { code },
-            })
+        googleLogin: builder.query({
+            query: () => `/google`,
         })
     }),
 });
@@ -112,7 +108,7 @@ export const {
     useGetuserProfileQuery,
     useVerifyOtpMutation,
     useRequestOtpMutation,
-    useGoogleLoginMutation
+    useGoogleLoginQuery
 } = authApi;
 
 export default authApi;
