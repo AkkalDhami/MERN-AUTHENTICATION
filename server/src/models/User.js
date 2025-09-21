@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     },
     loginMethod: {
         type: String,
-        enum: ['manual', 'google', 'github'],
+        enum: ['manual', 'google'],
         default: 'manual'
     },
     avatar: {
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
     bio: {
         type: String,
         trim: true,
-        default: "Hey, I'm using Neptask"
+        default: "Hey, I'm using Mern-Auth"
     },
     otp: {
         type: mongoose.Schema.Types.ObjectId,

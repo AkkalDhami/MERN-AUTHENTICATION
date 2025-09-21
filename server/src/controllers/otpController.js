@@ -10,18 +10,33 @@ import Otp from "../models/Otp.js";
 
 export async function requestOtp(req, res) {
     try {
-        const email = req.body?.email;
+       
+        const { email, purpose = "email-verify", meta = {} } = req.body;
+        if (!email) return res.status(400).json({
+            success: false,
+            message: "Email is required"
+        });
 
-        if (!email) {
-            return res.status(401).json({
+        const user = await User.findOne({ email });
+
+        if (purpose === "email-verify") {
+            if (user?.isEmailVerified) {
+                return res.status(400).json({ success: false, message: "Email is already verified" });
+            }
+        } else if (purpose === "password-reset" || purpose === "password-change") {
+
+            if (!user) return res.status(404).json({
                 success: false,
-                message: 'Email is required'
+                message: "No account found for this email"
             });
         }
 
-        const { code, codeHash, expiresAt } = generateOtp();
+        const { code, codeHash, expiresAt } = generateOtp({ length: 6, ttlMinutes: 10 });
+        const ip = req.ip;
+
         console.log(code);
-        await saveOtp(email, codeHash, expiresAt);
+        await saveOtp(email, codeHash, expiresAt, purpose, { ip, ...meta });
+
         const templatePath = path.resolve(process.cwd(), 'src', 'templates', 'otp.mjml');
         const mjml = fs.readFileSync(templatePath, 'utf8')
             .replaceAll('{{CODE}}', String(code))

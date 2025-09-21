@@ -1,32 +1,44 @@
 import mongoose from 'mongoose';
 
 const otpSchema = new mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+        index: true
+    },
+    purpose: {
+        type: String,
+        required: true,
+        index: true,
+    },
     codeHash: {
         type: String,
         required: true
+    },
+    attempts: {
+        type: Number,
+        default: 0
+    },
+    consumed: {
+        type: Boolean,
+        default: false
     },
     expiresAt: {
         type: Date,
         required: true,
         index: true
     },
-    consumed: {
-        type: Boolean,
-        default: false
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        index: true
     },
-    attempts: {
-        type: Number,
-        default: 0
-    },
-    email: {
-        type: String,
-        required: true
+    meta: {
+        type: mongoose.Schema.Types.Mixed
     }
-}, { timestamps: true });
+});
 
-// delete otp after 5 minutes
 otpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 300 });
-
 
 
 const Otp = mongoose.models.Otp || mongoose.model('Otp', otpSchema);
