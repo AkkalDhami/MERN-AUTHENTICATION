@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import mjml2html from 'mjml';
 import crypto from 'crypto'
-import axios from 'axios';
 
 import { sendMessageToEmail } from "../utils/email.js";
 
@@ -24,7 +23,6 @@ import {
 } from "../validators/authValidators.js";
 
 import cloudinary from '../configs/cloudinary.js';
-import { oauth2Client } from '../configs/google.js';
 
 
 //? REGISTER USER
@@ -165,11 +163,6 @@ export const forgotPassword = TryCatch(async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    // const isEmailVerified = await User.findOne({ email, isEmailVerified: true });
-    // if (!isEmailVerified) return res.status(401).json({
-    //     success: false,
-    //     message: "Please verify your email first"
-    // });
 
     const { resetPasswordExpire, resetPasswordToken, resetToken } = generateResetPasswordToken();
     if (user) {
@@ -243,7 +236,6 @@ export const resetPassword = TryCatch(async (req, res) => {
     })
 })
 
-
 //? CHANGE PASSWORD
 export const changePassword = TryCatch(async (req, res) => {
     const { data, error, success } = changePasswordSchema.safeParse(req.body);
@@ -257,6 +249,13 @@ export const changePassword = TryCatch(async (req, res) => {
     if (!user) return res.status(401).json({
         success: false,
         message: "User Not Found"
+    });
+
+
+    const isEmailVerified = await User.findOne({ email: user.email, isEmailVerified: true });
+    if (!isEmailVerified) return res.status(401).json({
+        success: false,
+        message: "Please verify your email first"
     });
 
     const { currentPassword, newPassword } = data;
@@ -349,63 +348,10 @@ export const updateProfile = TryCatch(async (req, res) => {
     })
 })
 
+
 //? GOOGLE LOGIN
-export const googleLogin = TryCatch(async (req, res) => {
-    const { code } = req.body;
-    console.log("code", code);
-    if (!code) return res.status(400).json({
-        success: false,
-        message: "Code is required"
-    });
-    const { tokens } = await oauth2Client.getToken({
-        code,
-        redirect_uri: process.env.GOOGLE_CALLBACK_URL,
-    });
-
-    oauth2Client.setCredentials(tokens);
-
-    const { data: userInfo } = await axios.get(
-        `https://www.googleapis.com/oauth2/v2/userinfo`,
-        { headers: { Authorization: `Bearer ${googleRes.tokens.access_token}` } }
-    );
-    console.log(userInfo);
-    const { email, picture, name } = userInfo;
-    let user = await User.findOne({ email });
-
-    if (!user) {
-        user = await User.create({
-            name,
-            email,
-            avatar: { url: picture },
-            loginMethod: "google",
-        });
-    }
-
-    const payload = {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-    }
-
-    const accessToken = signAccessToken(payload)
-    const refreshToken = signRefreshToken(payload)
-
-    user.refreshToken = refreshToken;
-    user.lastLogin = new Date();
-    await user.save();
-
-    await setAuthCookies({ res, accessToken, refreshToken });
-    res.status(200).json({
-        success: true,
-        message: 'Login Successfull!',
-        refreshToken,
-        accessToken,
-        user: {
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role
-        },
-    })
+export const googleLogin = TryCatch(async (req, res) => { 
+    console.log(req.params)
+    const token = jwt.sign(req.user._id, process.env.JWT_SECRET, { expiresIn: '17d' });
+    res.redirect(`${process.env.CLIENT_URL}/auth-success?token=${token}`);
 })

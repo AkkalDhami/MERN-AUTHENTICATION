@@ -26,15 +26,24 @@ export function signRefreshToken(payload) {
     return jwt.sign(payload, secret, { expiresIn });
 }
 
-export function generateOtp() {
-    const code = String(Math.floor(100000 + Math.random() * 900000));
-    const codeHash = crypto.createHash('sha256').update(code).digest('hex');
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+export function generateOtp({ length = 6, ttlMinutes = 10 } = {}) {
+    const code = String(Math.floor(Math.random() * Math.pow(10, length))).padStart(length, "0");
+    const codeHash = crypto.createHash("sha256").update(String(code)).digest("hex");
+    const expiresAt = new Date(Date.now() + ttlMinutes * 60 * 1000);
     return { code, codeHash, expiresAt };
 }
 
-export async function saveOtp(email, codeHash, expiresAt) {
-    return Otp.create({ email, codeHash, expiresAt, attempts: 0, consumed: false });
+
+export async function saveOtp(email, codeHash, expiresAt, purpose = "email-verify", meta = {}) {
+    await Otp.updateMany({ email, purpose, consumed: false }, { consumed: true }).catch(() => { });
+    const record = await Otp.create({
+        email,
+        purpose,
+        codeHash,
+        expiresAt,
+        meta
+    });
+    return record;
 }
 
 export async function setAuthCookies({ res, accessToken, refreshToken }) {

@@ -16,6 +16,7 @@ import { requestOtp, verifyOtp } from '../controllers/otpController.js';
 
 import { authRequired, isAuthenticated } from '../middlewares/auth.js';
 import upload from '../middlewares/upload.js';
+import passport from 'passport';
 
 const router = express.Router();
 
@@ -24,7 +25,7 @@ router.get('/profile', authRequired, isAuthenticated, getUserprofile);
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 
-router.post('/otp-request', authRequired, isAuthenticated, requestOtp);
+router.post('/otp-request', otpRequestLimiter, authRequired, isAuthenticated, requestOtp);
 router.post('/otp-verify', authRequired, isAuthenticated, verifyOtp);
 
 
@@ -37,6 +38,8 @@ router.post('/logout', authRequired, isAuthenticated, logoutUser)
 router.put('/update-profile', upload.single('avatar'), authRequired, isAuthenticated, updateProfile);
 
 
-router.post('/google-login', googleLogin);
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback', passport.authenticate('google', { session: false }), googleLogin);
 
 export default router;
